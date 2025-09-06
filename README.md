@@ -134,3 +134,94 @@ Express se caracteriza por ser minimalista, es decir, requerir para su uso una c
 Express por sí mismo no fuerza conceptos de MVC, pero si organizamos adecuadamente nuestro código, podremos implementar, finalmente, una arquitectura MVC Web con Express.
 
 
+
+
+**ORQUESTACIÓN DE CASOS DE USO**
+class Huesped
+crearReserva()
+buscarAlojamientos()
+MAL
+
+Buscamos lo siguiente
+class Huesped
+class Reserva
+class Alojamiento{
+	estaDisponibkeEntre(rango)
+	agregarReserva(reserva)
+}
+
+Tendremos otra clase que orqueste
+
+**ARQUITECTURA POR CAPAS**
+Controller -> Service -> Repository
+Cada capa tiene un rol único
+
+
+(Ejemplo de take away)
+
+Capa de controladores(recepcionista)
+Recibe las solicitudes externas (web, API, etc), las traduce al lenguaje de dominio, las delega en las capas inferiores para que las resuelvan, y devuelve la respuesta esperada..
+Esta capa expone los endpoints.
+Recibe los inputs al lenguaje de dominio, y luego delega a la capa de Services.
+Es responsable de manejar excepciones, códigos HTTP, validaciones superficiales (que los tipos de datos que recibe el endpoint sean correctos)
+No debe haber lógica de negocio.
+Un buen controlador es delegador y explícito.
+
+Capa de Servicios (barista)
+Orquesta ejecución de una operación de negocio.
+LLama a los objetos de dominio, repositorios y otros objetos de utilidad.
+Separa el "como se hace algo"(dominio) del "cuando y en qué orden" se hace (servicio)
+
+Capa de Repositorios
+Encapsula el acceso al medio persistente, que puede ser: memoria, archivos, bases de datos, etc.
+Traduce las entidades del dominio a un formato persistible y viceversa.
+
+Capa de dominio
+Lógica de negocio pura. Reglas, validaciones, entidades y objetos de valor.
+Existe una separación clara de responsabilidades entre las distintas clases.
+Las clases son autocontenidad y validadas.
+
+Vamos a la práctica.
+
+**Paginación**
+Que pasa si una API tiene miles de registros?
+No se puede mandar todos en una sola consulta
+Es lento
+Ocupa mucho ancho de banda
+Cuesta renderizar
+Mala experiencia de usuario
+
+La paginación es una técnica para dividir una gran cantidad de datos en una catidad limitada.
+Genera mejor rendimiento (menos datos por request)
+Menor consumo de red
+Navegación más cómoda para el usuario
+
+Request
+GET /productos ? page = 2 & limit = 10;
+
+Cáclulo en el servidor
+const offset = (page - 1) * limit
+const paginado = lista.slice(offset, pffset + limit)
+
+Respuesta
+{
+	"page" : 2,
+	"per_page": 10,
+	"total" : 50,
+	...
+}
+
+**Cualidades**
+Separar en capas reduce la complejidad
+Acoplamiento bajo -> cada capa depende de la capa adyacente
+Cohesión alta -> cada capa tiene un propósito claro
+Simplicidad (KISS/YAGNI/DRY) -> responsabilidades claras evitan duplicación y sobre ingeniería
+KISS: Keep it simple, stupid
+YAGNI: You arent gonna need it
+DRY: Dont repeat yourself
+
+Robustez -> entidades y reglas aisladas, protegias del mal uso
+Flexibilidad:
+-> cambiar BD, servicio externo o UI sin tocar el núcleo del negocio
+-> modificar características con poco esfuerzo
+-> agregar nuevas características con poco impacto
